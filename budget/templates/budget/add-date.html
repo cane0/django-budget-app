@@ -1,0 +1,23 @@
+{% extends 'budget/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+{% load static %}
+
+	<div class='container'>
+		<form action="" method="POST">
+			{% csrf_token %}
+			{{ form|crispy }}
+			<label for="categoryInput">Expense Categories (Hit enter after every category)</label>
+			<input type="text" name="categoryInput" id="categoryInput">
+			<input type="hidden" name="categoriesString">
+			
+			<ul id="categoriesContainer">
+				
+			</ul>
+			<button type="submit" class="btn">Add Today</button>
+		</form>
+	</div>
+	
+	<script src="{% static 'budget/script.js' %}"></script>
+	
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'budget/base.html' %}
+{% block content %}
+{% load static %}
+
+	<div class="container">
+		<section class="section section-stats">
+			<div class="row">
+				<div class="col s12 m4 14">
+					<div class="card-panel">
+						<h6 class="bold">Total Budget</h6>
+						<h3 class="bold">rs. {{ date.budget }}<h1>
+					</div>
+				</div>
+				<div class="col s6 m4 14">
+					<div class="card-panel">
+						<h6 class="bold">Budget Left</h6>
+						{% if date.budget_left > 0 %}
+							<h3 class="bold green-text">rs. {{ date.budget_left }}<h1>
+						{% elif date.budget_left == 0 %}
+							<h3 class="bold orange-text">rs. {{ date.budget_left }}<h1>
+						{% else %}
+							<h3 class="bold red-text">rs. {{ date.budget_left }}<h1>
+						{% endif %}
+					</div>
+				</div>
+				<div class="col s6 m4 14">
+					<div class="card-panel">
+						<h6 class="bold">Total Transactions</h6>
+						<h3 class="bold">{{ date.total_transactions }}<h1>
+					</div>
+				</div>
+			</div>
+		</section>
+		
+		<section class="section section-expenses">
+			<div class="row">
+				<button class="btn waves-effect right modal-trigger" href="#expenseModal">
+					<i class="material-icons white-text left">add_circle</i>
+					Add Expense
+				</button>
+			</div>
+			<ul class="z-depth-1">
+			
+				{% for expense in expense_list %}
+					<li>
+						<div class="card-panel z-depth-0 expense">
+							<div class="row">
+							
+								<div class="col m6">
+									<span class="title">{{ expense.title }}</span>
+								</div>
+								
+								<div class="col m3">
+									<span class="title">rs. {{ expense.amount }}</span>
+								</div>
+								
+								<div class="col m2">
+									<span class="title bold">{{ expense.category.name }}</span>
+								</div>
+								
+								<a onclick="deleteExpense({{ expense.id }})" class="col m1" href="">
+									<i class="material-icons red-text right">close</i>
+								</a>
+								
+							</div>
+						</div>
+					</li>
+				{% endfor %}
+			</ul>
+		</section>
+		
+	</div>
+	
+	<div id="expenseModal" class="modal">
+		<div class="modal-content">
+			<h4>Add Expense</h4>
+			<form method="POST">
+				{% csrf_token %}
+				<label for="title">Title</label>
+				<input name="title" id="title">
+				
+				<label for="amount">Amount</label>
+				<input name="amount" id="amount">
+				
+				<select name="category">
+					{% for category in category_list %}
+						<option>{{ category.name }}</option>
+					{% endfor %}
+				</select>
+				  
+				<button type="submit" class="btn">Add</button>
+			</form>
+			
+		</div>
+	</div>
+	
+	<script>
+		var elem = document.querySelector('.modal')
+		var instance = M.Modal.init(elem)
+		
+		var elem = document.querySelector('select')
+		var instance = M.FormSelect.init(elem)
+		
+		function deleteExpense(id){
+			fetch('', {
+				method: 'DELETE', 
+				headers: {
+					'X-CSRFToken': '{{ csrf_token }}'
+				},
+				body: JSON.stringify({
+					'id': id
+				}),
+				credentials: 'same-origin',
+			})
+		}
+	</script>
+
+
+{% endblock %}
